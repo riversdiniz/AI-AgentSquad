@@ -1,4 +1,4 @@
-# Escritório de agentes
+# AI AgentSquad
 
 ![Escritório de agentes à noite, com os agentes trabalhando nas mesas](docs/screenshot.png)
 
@@ -6,6 +6,15 @@ Um escritório em pixel art que mostra, em tempo real, o que cada sessão do Cla
 quem está trabalhando, quem precisa de você e quem ficou livre (e foi tomar um café).
 
 Funciona no **Linux** (testado no Ubuntu), no **Windows** e no macOS. Não tem dependências: só o Node.
+
+## O que você vê
+
+![Agente com a mão levantada pedindo permissão, outro esperando o terminal com pipoca, dois vendo futebol no lounge e um esperando parceiro no ping-pong](docs/vida-social.png)
+
+- **Trabalhando:** o agente digita na mesa e o monitor mostra código.
+- **Precisa de você:** corre para a mesa, levanta a mão e um aviso aparece no topo.
+- **Esperando o terminal:** fica na mesa com uma ampulheta, que vira pipoca se demorar.
+- **Livre:** vai para a cozinha, o lounge, o banheiro ou a sala de jogos, conforme o jeito de cada um.
 
 ## Requisitos
 
