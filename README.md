@@ -1,5 +1,7 @@
 # Escritório de agentes
 
+![Escritório de agentes à noite, com os agentes trabalhando nas mesas](docs/screenshot.png)
+
 Um escritório em pixel art que mostra, em tempo real, o que cada sessão do Claude Code está fazendo:
 quem está trabalhando, quem precisa de você e quem ficou livre (e foi tomar um café).
 
@@ -57,14 +59,14 @@ Uma sessão de mentira passa pelo hook de verdade: chega, lê, edita, pede permi
 
 ## Comandos
 
-| Comando | O que faz |
-| --- | --- |
-| `npm start` | Abre o escritório em http://localhost:4321 |
-| `npm run dev` | O mesmo, reiniciando quando você muda o servidor |
-| `npm run demo` | Abre com a demonstração sempre ligada |
-| `npm run hooks:instalar` | Liga o escritório no Claude Code |
-| `npm run hooks:remover` | Tira os hooks do escritório do `settings.json` |
-| `npm run hooks:testar` | Simula uma sessão para conferir se está tudo ligado |
+| Comando                  | O que faz                                           |
+| ------------------------ | --------------------------------------------------- |
+| `npm start`              | Abre o escritório em http://localhost:4321          |
+| `npm run dev`            | O mesmo, reiniciando quando você muda o servidor    |
+| `npm run demo`           | Abre com a demonstração sempre ligada               |
+| `npm run hooks:instalar` | Liga o escritório no Claude Code                    |
+| `npm run hooks:remover`  | Tira os hooks do escritório do `settings.json`      |
+| `npm run hooks:testar`   | Simula uma sessão para conferir se está tudo ligado |
 
 Outra porta: `npm start -- --porta 4322`. Nesse caso, avise o hook com a variável `ESCRITORIO_URL`
 (por exemplo `ESCRITORIO_URL=http://127.0.0.1:4322`).
@@ -75,15 +77,15 @@ Outra porta: `npm start -- --porta 4322`. Nesse caso, avise o hook com a variáv
 Claude Code ──hook──▶ hooks/enviar-evento.js ──POST /api/hook──▶ servidor Node ──SSE──▶ navegador (canvas)
 ```
 
-| Evento do Claude Code | O que acontece no escritório |
-| --- | --- |
-| `SessionStart` | O agente chega pelo elevador |
-| `UserPromptSubmit` | Vai para a mesa trabalhar |
-| `PreToolUse` | Mostra o que está fazendo (lendo, editando, rodando um comando…) |
-| `Notification` (permissão) | Corre para a mesa e levanta a mão |
-| `PostToolUse` | Volta a trabalhar depois da sua resposta |
-| `Stop` | Fica livre e vai para a cozinha ou o lounge |
-| `SessionEnd` | Vai embora pelo elevador |
+| Evento do Claude Code      | O que acontece no escritório                                     |
+| -------------------------- | ---------------------------------------------------------------- |
+| `SessionStart`             | O agente chega pelo elevador                                     |
+| `UserPromptSubmit`         | Vai para a mesa trabalhar                                        |
+| `PreToolUse`               | Mostra o que está fazendo (lendo, editando, rodando um comando…) |
+| `Notification` (permissão) | Corre para a mesa e levanta a mão                                |
+| `PostToolUse`              | Volta a trabalhar depois da sua resposta                         |
+| `Stop`                     | Fica livre e vai para a cozinha ou o lounge                      |
+| `SessionEnd`               | Vai embora pelo elevador                                         |
 
 - **Privacidade:** o hook manda só o nome do evento, a pasta, o nome da ferramenta e um resumo dela
   (caminho do arquivo, comando). O seu prompt e o conteúdo dos arquivos nunca saem do Claude Code.
@@ -109,7 +111,7 @@ public/index.html          o escritório (canvas em pixel art + interface)
 
 ## Problemas comuns
 
-- **Ninguém aparece:** confira se o servidor está ligado, se você abriu uma sessão *nova* depois de instalar
+- **Ninguém aparece:** confira se o servidor está ligado, se você abriu uma sessão _nova_ depois de instalar
   os hooks e rode `npm run hooks:testar`.
 - **“A porta 4321 já está em uso”:** outro processo usa a porta. Use `--porta` (veja acima).
 - **`node` não encontrado no Windows:** feche e abra o PowerShell depois de instalar o Node.
@@ -125,4 +127,3 @@ ideia original vai para ele. O código e a arte deste repositório foram escrito
 
 [MIT](LICENSE) © 2026 River Diniz. As fontes Pixelify Sans e Atkinson Hyperlegible são carregadas do
 Google Fonts e distribuídas sob a SIL Open Font License.
-
