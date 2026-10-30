@@ -22,7 +22,7 @@ Funciona no **Linux** (testado no Ubuntu), no **Windows** e no macOS. Não tem d
 Os comandos são os mesmos no terminal do Ubuntu e no PowerShell do Windows.
 
 ```bash
-cd escritorio-agentes
+cd AI-AgentSquad
 npm start
 ```
 
