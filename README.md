@@ -131,6 +131,24 @@ scripts/gerar-pagina-unica.js  junta tudo num HTML só (npm run build:unico)
 - **`node` não encontrado no Windows:** feche e abra o PowerShell depois de instalar o Node.
 - **Mais de 10 sessões:** a planta atual tem 10 mesas; quem passar disso não aparece até liberar uma mesa.
 
+## Como contribuir
+
+Contribuições são bem-vindas! Alguns pontos fáceis para começar:
+
+- **Falas dos personagens:** ficam no começo de `public/js/simulacao.js`, em `FALAS` (por atividade),
+  `CONVERSA` (assuntos da cozinha) e `REACOES` (respostas). Dá para usar `{outro}` (nome de um colega),
+  `{jogador}` (quem está jogando) e `{projeto}` (o projeto de quem fala).
+- **Personalidades:** a lista `PERSONAS`, no mesmo arquivo, define o nome, o jeito, o bordão e o que
+  cada um gosta de fazer quando está livre.
+- **Planta do escritório:** a grade `PLANTA` em `public/js/planta.js`. A legenda está no comentário logo acima.
+- **Móveis:** cada caractere da planta tem uma função de desenho em `public/js/moveis.js`.
+
+Para testar sem abrir o Claude Code, rode `npm run demo` (agentes fictícios) ou, com o servidor ligado,
+`npm run hooks:testar` (uma sessão simulada passando pelo hook de verdade).
+
+Abra uma _issue_ para discutir ideias maiores antes de começar, ou mande um _pull request_ direto
+para ajustes pequenos.
+
 ## Inspiração
 
 A ideia deste projeto veio do [Habblaud](https://github.com/marmottajr/habblaud), de Márcio Junior:
