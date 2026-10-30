@@ -1,0 +1,128 @@
+# Escritório de agentes
+
+Um escritório em pixel art que mostra, em tempo real, o que cada sessão do Claude Code está fazendo:
+quem está trabalhando, quem precisa de você e quem ficou livre (e foi tomar um café).
+
+Funciona no **Linux** (testado no Ubuntu), no **Windows** e no macOS. Não tem dependências: só o Node.
+
+## Requisitos
+
+- **Node.js 18 ou mais novo**. Confira com `node -v`.
+  - **Ubuntu:** o `nodejs` do `apt` costuma ser antigo. Use o nvm:
+    ```bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    # feche e abra o terminal
+    nvm install --lts
+    ```
+  - **Windows:** instale a versão LTS em https://nodejs.org ou rode `winget install OpenJS.NodeJS.LTS` no PowerShell.
+- **Claude Code** instalado, para ver as suas sessões de verdade. Sem ele, o escritório roda só a demonstração.
+
+## Instalação
+
+Os comandos são os mesmos no terminal do Ubuntu e no PowerShell do Windows.
+
+```bash
+cd escritorio-agentes
+npm start
+```
+
+Abra http://localhost:4321. Sem nenhuma sessão aberta, aparece a demonstração com agentes fictícios.
+
+### Ligar no Claude Code
+
+Num segundo terminal, na pasta do projeto:
+
+```bash
+npm run hooks:instalar
+```
+
+O comando adiciona hooks no `settings.json` do Claude Code (`~/.claude/settings.json` no Linux,
+`C:\Users\<você>\.claude\settings.json` no Windows). Antes de mexer, ele salva um backup ao lado do arquivo,
+e os hooks que você já tinha continuam lá.
+
+Depois, abra uma **sessão nova** do Claude Code em qualquer projeto. O agente chega pelo elevador e a
+demonstração desliga sozinha. Se o Claude Code avisar que os hooks mudaram, revise e aceite em `/hooks`.
+
+> O caminho do hook fica gravado no `settings.json`. Se mover a pasta do projeto, rode `npm run hooks:instalar` de novo.
+
+### Testar sem abrir o Claude Code
+
+Com o servidor ligado:
+
+```bash
+npm run hooks:testar
+```
+
+Uma sessão de mentira passa pelo hook de verdade: chega, lê, edita, pede permissão, roda testes e vai embora.
+
+## Comandos
+
+| Comando | O que faz |
+| --- | --- |
+| `npm start` | Abre o escritório em http://localhost:4321 |
+| `npm run dev` | O mesmo, reiniciando quando você muda o servidor |
+| `npm run demo` | Abre com a demonstração sempre ligada |
+| `npm run hooks:instalar` | Liga o escritório no Claude Code |
+| `npm run hooks:remover` | Tira os hooks do escritório do `settings.json` |
+| `npm run hooks:testar` | Simula uma sessão para conferir se está tudo ligado |
+
+Outra porta: `npm start -- --porta 4322`. Nesse caso, avise o hook com a variável `ESCRITORIO_URL`
+(por exemplo `ESCRITORIO_URL=http://127.0.0.1:4322`).
+
+## Como funciona
+
+```
+Claude Code ──hook──▶ hooks/enviar-evento.js ──POST /api/hook──▶ servidor Node ──SSE──▶ navegador (canvas)
+```
+
+| Evento do Claude Code | O que acontece no escritório |
+| --- | --- |
+| `SessionStart` | O agente chega pelo elevador |
+| `UserPromptSubmit` | Vai para a mesa trabalhar |
+| `PreToolUse` | Mostra o que está fazendo (lendo, editando, rodando um comando…) |
+| `Notification` (permissão) | Corre para a mesa e levanta a mão |
+| `PostToolUse` | Volta a trabalhar depois da sua resposta |
+| `Stop` | Fica livre e vai para a cozinha ou o lounge |
+| `SessionEnd` | Vai embora pelo elevador |
+
+- **Privacidade:** o hook manda só o nome do evento, a pasta, o nome da ferramenta e um resumo dela
+  (caminho do arquivo, comando). O seu prompt e o conteúdo dos arquivos nunca saem do Claude Code.
+  O servidor só escuta na própria máquina (`127.0.0.1`).
+- **Segurança do Claude:** o hook nunca imprime nada, nunca falha e desiste em menos de 1 segundo
+  se o escritório estiver fechado. Com o servidor desligado, o Claude Code segue normal.
+- **A planta:** fica na grade `PLANTA`, no começo do script de `public/index.html`. A legenda está no comentário.
+- **A arte:** é toda gerada por código (sem imagens). Móveis viram sprites em cache na abertura; a projeção
+  isométrica fica só na função `P()`. Para trocar por sprites prontos, use `spriteDeImagem()` no lugar da função do móvel.
+- **Dia e noite:** segue o relógio do computador (ou o botão “Hora”). À noite, a luz de cada cômodo só acende quando tem alguém lá.
+
+## Estrutura
+
+```
+server/index.js            servidor HTTP + SSE, sem dependências
+server/escritorio.js       estado das sessões e tradução dos eventos
+server/config.js           porta, pasta do Claude Code (Linux e Windows) e modo demonstração
+hooks/enviar-evento.js     hook chamado pelo Claude Code
+scripts/instalar-hooks.js  instala e remove os hooks no settings.json
+scripts/testar-hook.js     sessão de mentira para teste
+public/index.html          o escritório (canvas em pixel art + interface)
+```
+
+## Problemas comuns
+
+- **Ninguém aparece:** confira se o servidor está ligado, se você abriu uma sessão *nova* depois de instalar
+  os hooks e rode `npm run hooks:testar`.
+- **“A porta 4321 já está em uso”:** outro processo usa a porta. Use `--porta` (veja acima).
+- **`node` não encontrado no Windows:** feche e abra o PowerShell depois de instalar o Node.
+- **Mais de 10 sessões:** a planta atual tem 10 mesas; quem passar disso não aparece até liberar uma mesa.
+
+## Inspiração
+
+A ideia deste projeto veio do [Habblaud](https://github.com/marmottajr/habblaud), de Márcio Junior:
+um escritório em pixel art onde cada agente do Claude Code vira um personagem. Todo o crédito pela
+ideia original vai para ele. O código e a arte deste repositório foram escritos do zero.
+
+## Licença
+
+[MIT](LICENSE) © 2026 River Diniz. As fontes Pixelify Sans e Atkinson Hyperlegible são carregadas do
+Google Fonts e distribuídas sob a SIL Open Font License.
+
