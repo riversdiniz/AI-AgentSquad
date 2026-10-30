@@ -29,6 +29,12 @@ function emitir() {
   }
 }
 
+/** Esvazia o escritório e volta o modo demonstração ao padrão. Usado nos testes. */
+export function reiniciar() {
+  sessoes.clear();
+  modoDemo = DEMO;
+}
+
 export function definirDemo(ligado) {
   modoDemo = ligado ? "on" : "off";
   emitir();
