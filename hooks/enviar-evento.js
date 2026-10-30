@@ -26,6 +26,8 @@ process.stdin.on("end", () => {
     hook_event_name: ev.hook_event_name,
     cwd: ev.cwd,
     tool_name: ev.tool_name,
+    tool_use_id: ev.tool_use_id,
+    agent_id: ev.agent_id,
     tool_input: ti && {
       command: ti.command, description: ti.description, file_path: ti.file_path, notebook_path: ti.notebook_path,
       pattern: ti.pattern, query: ti.query, url: ti.url, subagent_type: ti.subagent_type, run_in_background: ti.run_in_background,

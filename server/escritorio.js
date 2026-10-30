@@ -9,7 +9,11 @@ export function snapshot() {
   return {
     demo: modoDemo === "on" || (modoDemo === "auto" && sessoes.size === 0),
     modoDemo,
-    agentes: [...sessoes.values()].map(({ id, projeto, status, tarefa, desde }) => ({ id, projeto, status, tarefa, desde })),
+    agentes: [...sessoes.values()].flatMap(({ id, projeto, status, tarefa, desde, subs }) => [
+      { id, projeto, status, tarefa, desde },
+      // subagentes viram colegas temporários, ligados ao agente que os chamou
+      ...subs.map((sub) => ({ id: sub.id, pai: id, sub: true, projeto, status: "trabalhando", tarefa: sub.tarefa, descricao: sub.descricao, tipo: sub.tipo, desde: sub.desde })),
+    ]),
   };
 }
 
@@ -66,6 +70,9 @@ function traduzirAviso(msg = "") {
   return curto(msg, 80) || "Precisa de uma resposta no terminal";
 }
 
+const ehSubagente = (nome) => nome === "Task" || nome === "Agent";
+const esperandoSubs = (s) => s.subs.length === 1 ? `Esperando o subagente: ${s.subs[0].descricao}` : `Esperando ${s.subs.length} subagentes`;
+
 function mudar(s, status, tarefa) {
   if (s.status !== status) s.desde = Date.now();
   s.status = status;
@@ -84,7 +91,7 @@ export function receberEvento(ev) {
     return;
   }
   if (!s) {
-    s = { id, projeto: pasta(ev.cwd), status: "ocioso", tarefa: "Esperando o primeiro pedido", desde: Date.now() };
+    s = { id, projeto: pasta(ev.cwd), status: "ocioso", tarefa: "Esperando o primeiro pedido", desde: Date.now(), subs: [], nSub: 0 };
     sessoes.set(id, s);
   }
   if (ev.cwd) s.projeto = pasta(ev.cwd);
@@ -93,15 +100,36 @@ export function receberEvento(ev) {
   switch (evento) {
     case "SessionStart": mudar(s, "ocioso", "Esperando o primeiro pedido"); break;
     case "UserPromptSubmit": mudar(s, "trabalhando", "Lendo o seu pedido"); break;
-    case "PreToolUse": mudar(s, "trabalhando", descreverFerramenta(ev.tool_name, ev.tool_input || {})); break;
-    case "PostToolUse": if (s.status === "precisa") mudar(s, "trabalhando", "Recebeu sua resposta e seguiu"); break;
+    case "PreToolUse": {
+      const ti = ev.tool_input || {};
+      if (ehSubagente(ev.tool_name)) {
+        s.nSub += 1;
+        s.subs.push({
+          id: `${id}:${ev.tool_use_id || s.nSub}`, chave: ev.tool_use_id || null, desde: Date.now(),
+          descricao: curto(ti.description || "uma tarefa", 50), tipo: ti.subagent_type || "geral", tarefa: "Começando a tarefa",
+        });
+        mudar(s, "trabalhando", esperandoSubs(s));
+      } else if (s.subs.length) {
+        // Com subagentes rodando, as ferramentas usadas são deles: credita ao mais recente
+        s.subs[s.subs.length - 1].tarefa = descreverFerramenta(ev.tool_name, ti);
+        if (s.status === "precisa") mudar(s, "trabalhando", esperandoSubs(s));
+      } else mudar(s, "trabalhando", descreverFerramenta(ev.tool_name, ti));
+      break;
+    }
+    case "PostToolUse":
+      if (ehSubagente(ev.tool_name)) {
+        const i = ev.tool_use_id ? s.subs.findIndex((x) => x.chave === ev.tool_use_id) : 0;
+        if (i >= 0 && s.subs.length) s.subs.splice(i, 1);
+        mudar(s, "trabalhando", s.subs.length ? esperandoSubs(s) : "Recebeu o resultado do subagente");
+      } else if (s.status === "precisa") mudar(s, "trabalhando", s.subs.length ? esperandoSubs(s) : "Recebeu sua resposta e seguiu");
+      break;
     case "Notification": {
       const msg = ev.message || "";
       if (/waiting for your input/i.test(msg)) mudar(s, "ocioso", "Esperando o seu próximo pedido");
       else mudar(s, "precisa", traduzirAviso(msg));
       break;
     }
-    case "Stop": mudar(s, "ocioso", "Terminou a vez e espera o próximo pedido"); break;
+    case "Stop": s.subs = []; mudar(s, "ocioso", "Terminou a vez e espera o próximo pedido"); break;
   }
   emitir();
 }

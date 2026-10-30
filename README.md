@@ -109,13 +109,18 @@ Claude Code ──hook──▶ hooks/enviar-evento.js ──POST /api/hook─�
 ## Estrutura
 
 ```
-server/index.js            servidor HTTP + SSE, sem dependências
-server/escritorio.js       estado das sessões e tradução dos eventos
-server/config.js           porta, pasta do Claude Code (Linux e Windows) e modo demonstração
-hooks/enviar-evento.js     hook chamado pelo Claude Code
-scripts/instalar-hooks.js  instala e remove os hooks no settings.json
-scripts/testar-hook.js     sessão de mentira para teste
-public/index.html          o escritório (canvas em pixel art + interface)
+public/index.html          a página
+public/css/escritorio.css  estilos da interface
+public/js/planta.js        a grade do escritório e os lugares de cada atividade
+public/js/motor.js         projeção isométrica e rasterização em pixel
+public/js/cenario.js       piso, paredes, janelas, dia e noite
+public/js/moveis.js        cada móvel, desenhado por código
+public/js/personagem.js    os personagens e suas poses
+public/js/simulacao.js     agentes, subagentes, vida social e demonstração
+public/js/quadro.js        desenho de cada quadro, iluminação e câmera
+public/js/interface.js     painel, botões e avisos (som e notificação)
+public/js/conexao.js       conexão com o servidor e laço principal
+scripts/gerar-pagina-unica.js  junta tudo num HTML só (npm run build:unico)
 ```
 
 ## Problemas comuns

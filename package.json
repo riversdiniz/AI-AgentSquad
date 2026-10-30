@@ -15,6 +15,7 @@
     "demo": "node server/index.js --demo",
     "hooks:instalar": "node scripts/instalar-hooks.js",
     "hooks:remover": "node scripts/instalar-hooks.js --remover",
-    "hooks:testar": "node scripts/testar-hook.js"
+    "hooks:testar": "node scripts/testar-hook.js",
+    "build:unico": "node scripts/gerar-pagina-unica.js"
   }
 }
