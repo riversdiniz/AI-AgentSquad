@@ -2,17 +2,17 @@
    AGENTES E SIMULAÇÃO
    ===================================================================== */
 const PERSONAS = [
-  { nome:"Ana",   jeito:"Movida a café",          gostos:{ cafe:5, conversa:2, futebol:1, games:1, agua:1, pingpong:1, espelho:1 } },
-  { nome:"Bento", jeito:"Torcedor fanático",      gostos:{ cafe:1, conversa:1, futebol:6, games:1, agua:1, pingpong:2, espelho:1 } },
-  { nome:"Caio",  jeito:"Gamer de fliperama",     gostos:{ cafe:1, conversa:1, futebol:2, games:6, agua:1, pingpong:2, espelho:1 } },
-  { nome:"Duda",  jeito:"Fala pelos cotovelos",   gostos:{ cafe:2, conversa:6, futebol:1, games:1, agua:1, pingpong:1, espelho:2 } },
-  { nome:"Elis",  jeito:"Zen e hidratada",        gostos:{ cafe:1, conversa:2, futebol:1, games:1, agua:5, pingpong:1, espelho:2 } },
-  { nome:"Fábio", jeito:"Competitivo no ping-pong", gostos:{ cafe:2, conversa:1, futebol:2, games:2, agua:1, pingpong:6, espelho:1 } },
-  { nome:"Gabi",  jeito:"Vaidosa",                gostos:{ cafe:2, conversa:3, futebol:1, games:1, agua:1, pingpong:1, espelho:6 } },
-  { nome:"Hugo",  jeito:"Joga de tudo",           gostos:{ cafe:1, conversa:1, futebol:3, games:4, agua:1, pingpong:4, espelho:1 } },
-  { nome:"Iara",  jeito:"Equilibrada",            gostos:{ cafe:2, conversa:2, futebol:2, games:2, agua:2, pingpong:2, espelho:2 } },
-  { nome:"Lia",   jeito:"Sempre com uma caneca",  gostos:{ cafe:5, conversa:3, futebol:1, games:1, agua:1, pingpong:1, espelho:1 } },
-  { nome:"Murilo",jeito:"Fofoqueiro da cozinha",  gostos:{ cafe:3, conversa:5, futebol:1, games:1, agua:1, pingpong:2, espelho:1 } },
+  { nome:"Ana",   jeito:"Movida a café", bordao:"Primeiro o café, depois o código.",          gostos:{ cafe:5, conversa:2, futebol:1, games:1, agua:1, pingpong:1, espelho:1 } },
+  { nome:"Bento", jeito:"Torcedor fanático", bordao:"Hoje tem jogo!",      gostos:{ cafe:1, conversa:1, futebol:6, games:1, agua:1, pingpong:2, espelho:1 } },
+  { nome:"Caio",  jeito:"Gamer de fliperama", bordao:"Só mais uma partida…",     gostos:{ cafe:1, conversa:1, futebol:2, games:6, agua:1, pingpong:2, espelho:1 } },
+  { nome:"Duda",  jeito:"Fala pelos cotovelos", bordao:"Deixa eu te contar uma coisa…",   gostos:{ cafe:2, conversa:6, futebol:1, games:1, agua:1, pingpong:1, espelho:2 } },
+  { nome:"Elis",  jeito:"Zen e hidratada", bordao:"Respira e hidrata.",        gostos:{ cafe:1, conversa:2, futebol:1, games:1, agua:5, pingpong:1, espelho:2 } },
+  { nome:"Fábio", jeito:"Competitivo no ping-pong", bordao:"Quem encara uma partida?", gostos:{ cafe:2, conversa:1, futebol:2, games:2, agua:1, pingpong:6, espelho:1 } },
+  { nome:"Gabi",  jeito:"Vaidosa", bordao:"Alguém viu meu pente?",                gostos:{ cafe:2, conversa:3, futebol:1, games:1, agua:1, pingpong:1, espelho:6 } },
+  { nome:"Hugo",  jeito:"Joga de tudo", bordao:"Bora competir!",           gostos:{ cafe:1, conversa:1, futebol:3, games:4, agua:1, pingpong:4, espelho:1 } },
+  { nome:"Iara",  jeito:"Equilibrada", bordao:"Tudo no equilíbrio.",            gostos:{ cafe:2, conversa:2, futebol:2, games:2, agua:2, pingpong:2, espelho:2 } },
+  { nome:"Lia",   jeito:"Sempre com uma caneca", bordao:"Cadê minha caneca?",  gostos:{ cafe:5, conversa:3, futebol:1, games:1, agua:1, pingpong:1, espelho:1 } },
+  { nome:"Murilo",jeito:"Fofoqueiro da cozinha", bordao:"Vocês souberam da última?",  gostos:{ cafe:3, conversa:5, futebol:1, games:1, agua:1, pingpong:2, espelho:1 } },
 ];
 const PROJETOS = ["site-institucional", "api-pagamentos", "app-mobile", "pipeline-dados"];
 const SHIRTS = ["#e3a32f", "#3a7bd5", "#d2553f", "#3e9b6e", "#8a5cc2", "#2bb3b1", "#e06b9a", "#5c6bd1", "#c7a12a", "#4f8f3a", "#ef7d3c"];
@@ -28,7 +28,73 @@ const PEDIDOS = ["Quer permissão para rodar rm -rf dist", "Pergunta qual banco 
 const COMANDOS = ["npm run build", "pytest -q", "docker compose up -d", "npm test", "npx prisma migrate dev"];
 const ATIVIDADE_TXT = { cafe:"tomar um café", agua:"beber água", conversa:"bater papo na cozinha", futebol:"ver futebol no lounge",
   games:"jogar fliperama", pingpong:"jogar ping-pong", espelho:"se arrumar no espelho" };
-const ICONES = { cafe:"☕", agua:"💧", conversa:"💬", futebol:"⚽", games:"🕹️", pingpong:"🏓", espelho:"🪞" };
+const ICONES = { cafe:"☕", agua:"💧", conversa:"💬", futebol:"⚽", games:"🕹️", pingpong:"🏓", espelho:"🪞", plateia:"👀" };
+const PLATEIA_TXT = { pingpong:"assistir ao ping-pong", futebol:"torcer em pé no lounge", games:"assistir ao fliperama" };
+const textoAtividade = spot => spot.tipo === "plateia" ? PLATEIA_TXT[spot.assiste] : ATIVIDADE_TXT[spot.tipo];
+
+/* =====================================================================
+   FALAS: o que cada um diz nos balões
+   {outro} vira o nome de um colega presente, {jogador} quem está jogando,
+   {projeto} o projeto de quem fala.
+   ===================================================================== */
+const FALAS = {
+  cafe:     ["Café é vida ☕", "Só mais um gole…", "Esse tá forte, hein!", "Quem passou esse café? Tá ótimo!"],
+  agua:     ["Hidratação em dia 💧", "Que calor hoje!", "Água: o melhor energético."],
+  games:    ["Que lag é esse?!", "Última fase!", "Combo! 💥", "Recorde batido! 🏆", "Só mais uma ficha…"],
+  pingpong: ["Toma essa! 🏓", "Essa foi na rede…", "Que saque!", "Agora é sério!", "Ponto meu!"],
+  espelho:  ["Arrasando hoje ✨", "Cabelo no lugar!", "Só um retoque…", "Pronto pra reunião 😎"],
+  futebol:  ["Que golaço!", "Pega, goleiro!", "Juiz, olha isso!", "Vai, vai, vai…", "Quase!"],
+  plateia: {
+    pingpong: ["Boa jogada!", "Uhuuu! 🏓", "Que rally!", "Vai, {jogador}!"],
+    futebol:  ["Que jogo!", "Senta, senta! 😅", "Esse time não joga nada…"],
+    games:    ["Vai, {jogador}!", "Pula! Pula!", "Quero a próxima!"],
+  },
+};
+function falasDoDia() {
+  const d = new Date().getDay(), h = new Date().getHours();
+  const l = [];
+  if (d === 5) l.push("Sextou! 🎉"); if (d === 1) l.push("Segunda de novo…");
+  if (h >= 11 && h < 14) l.push("Bora almoçar?"); if (h >= 18 || h < 5) l.push("Hora extra de novo? 😴");
+  return l.length ? l : ["Que dia corrido!"];
+}
+const CONVERSA = {
+  fofoca:   () => ["Viu o commit de {outro}? 👀", "Dizem que o {projeto} vai ganhar outra fase…", "Quem deixou a caneca na pia? 👀"],
+  piada:    () => ["Funcionou na minha máquina! 😂", "Tem bug? Chama de feature.", "99 bugs no código… corrige um… 127 bugs 😂"],
+  trabalho: () => ["Deploy na sexta? Nem pensar 😅", "Os testes passaram de primeira!", "Quem revisa meu PR? 🙏"],
+  dia:      falasDoDia,
+};
+const REACOES = { fofoca:["Sério?! 👀", "Não acredito!", "Conta mais!"], piada:["Hahaha 😂", "Kkkkk", "Essa foi boa!"],
+  trabalho:["Verdade…", "Nem me fala.", "Bora!"], dia:["Pois é!", "Haha, verdade"] };
+
+function preencher(txt, a) {
+  const outros = state.agents.filter(o => o !== a && o.leaving === 0 && !o.sub);
+  const jogadores = state.agents.filter(o => o.spot && a.spot && o.spot.tipo === a.spot.assiste && o.arrived);
+  return txt.replace("{outro}", outros.length ? pick(outros).nome : "alguém")
+            .replace("{jogador}", jogadores.length ? pick(jogadores).nome : "time")
+            .replace("{projeto}", a.projeto);
+}
+function falar(a, texto, dur = 3.4, alerta = false) {
+  if (!texto || a.leaving > 0) return;
+  a.fala = { texto: preencher(texto, a), ate: state.time + dur, alerta };
+}
+function responderDepois(quem, texto, atraso = 1.3) { state.respostas.push({ quem, texto, em: state.time + atraso }); }
+function saudacao() { const h = new Date().getHours(); return h < 12 ? "Bom dia! 👋" : h < 18 ? "Boa tarde! 👋" : "Boa noite! 👋"; }
+const atividadeAtiva = tipo => tipo === "pingpong" ? !!state.pp : state.agents.some(o => o.spot && o.spot.tipo === tipo && o.arrived && o.status === "ocioso");
+
+function puxarAssunto(a) {
+  const tipo = a.spot.tipo;
+  if (Math.random() < 0.12 && a.bordao) return falar(a, a.bordao);
+  if (tipo === "plateia") return falar(a, pick(FALAS.plateia[a.spot.assiste]));
+  if (tipo === "conversa") {
+    const roda = state.agents.filter(o => o !== a && o.spot && o.spot.tipo === "conversa" && o.arrived && !o.fala);
+    if (!roda.length) return falar(a, pick(FALAS.cafe));
+    const assunto = pick(Object.keys(CONVERSA));
+    falar(a, pick(CONVERSA[assunto]()));
+    responderDepois(pick(roda), pick(REACOES[assunto]));
+    return;
+  }
+  if (FALAS[tipo]) falar(a, pick(FALAS[tipo]));
+}
 const STATUS_TXT = { chegando:"Chegando", trabalhando:"Trabalhando", precisa:"Precisa de você", shell:"Esperando o terminal", ocioso:"Livre", saindo:"Indo embora" };
 
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -36,7 +102,7 @@ const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
 const state = {
   agents: [], selected: null, paused: false, speed: 1, elevatorOpen: 0, gol: 0, nextId: 1, uiDirty: true, time: 0,
-  faseFixa: null, luz: {}, pp: null, demo: false, modo: "conectando",
+  faseFixa: null, luz: {}, pp: null, demo: false, modo: "conectando", respostas: [],
 };
 for (const z of FLOORS) state.luz[z] = 0;
 
@@ -79,7 +145,7 @@ function criarAgente({ jaSentado = false, sid = null, projeto = null, real = fal
   const sementes = sid ? hash(sid + "visual") : Math.floor(Math.random() * 1e9);
   const de = (arr, i) => arr[(sementes >>> (i * 3)) % arr.length];
   const a = {
-    id, sid, real, sub, pai, descricao, nome: persona.nome, jeito: persona.jeito, gostos: persona.gostos, projeto: projeto || pick(PROJETOS),
+    id, sid, real, sub, pai, descricao, nome: persona.nome, jeito: persona.jeito, bordao: persona.bordao, gostos: persona.gostos, projeto: projeto || pick(PROJETOS),
     pal: { shirt: de(SHIRTS, 0), hair: de(HAIRS, 1), skin: de(SKINS, 2), pants: de(PANTS, 3), shoe: de(SHOES, 4),
            cabelo: (sementes >>> 15) % 4, estilo: (sementes >>> 18) % 4, oculos: (sementes >>> 21) % 5 === 0, gravata: "#c0392b" },
     seed: Math.random() * 10, desk, px: ELEVATOR.x + 0.5, py: ELEVATOR.y + 0.5, path: [], face: "front", flip: false, walkT: 0,
@@ -93,6 +159,7 @@ function criarAgente({ jaSentado = false, sid = null, projeto = null, real = fal
     log(sub && pai ? `${a.nome} chegou como subagente de ${pai.nome}: ${descricao}` : `${a.nome} chegou pelo elevador para trabalhar em <code>${a.projeto}</code>`);
     goTo(a, desk.x, desk.y, () => {
       sentarNaMesa(a);
+      if (!sub) falar(a, saudacao(), 2.6);
       if (a.real) { a.status = "trabalhando"; const p = a.pendente || { status:"ocioso", tarefa:"Esperando o primeiro pedido" }; a.pendente = null; aplicarStatusReal(a, p); }
       else setStatus(a, "trabalhando", pick(TAREFAS));
     });
@@ -103,7 +170,9 @@ function criarAgente({ jaSentado = false, sid = null, projeto = null, real = fal
 function sentarNaMesa(a) { a.px = a.desk.x + 0.5; a.py = a.desk.y + 0.82; a.sitting = true; a.seatH = 14; a.face = a.desk.face; a.flip = a.desk.flip; a.atDesk = true; a.arrived = true; }
 
 function setStatus(a, status, tarefa, comLog = true) {
-  if (status === "precisa" && a.status !== "precisa") avisar(a);
+  if (status === "precisa" && a.status !== "precisa") { avisar(a); falar(a, "Preciso de você! ✋", 3, true); }
+  if (a.status === "ocioso" && status !== "ocioso" && status !== "saindo" && a.spot && a.arrived) falar(a, pick(["Chegou pedido, fui! 🏃", "Opa, me chamaram!", "Volto já!"]), 2.4);
+  if (status !== a.status) a.disseBuild = false;
   a.status = status; if (tarefa) a.tarefa = tarefa; a.since = state.time;
   if (comLog) {
     const msgs = {
@@ -120,10 +189,11 @@ function voltarParaMesa(a, depois) { liberarSpot(a); goTo(a, a.desk.x, a.desk.y,
 
 function escolherAtividade(a) {
   const ocupados = new Set(state.agents.filter(o => o !== a && o.spot).map(o => o.spot.key));
-  const livres = SPOTS.filter(s => !ocupados.has(s.key));
+  const livres = SPOTS.filter(s => !ocupados.has(s.key) && (s.tipo !== "plateia" || atividadeAtiva(s.assiste)));
   if (!livres.length) return;
   const outrosLivres = state.agents.filter(o => o !== a && o.status === "ocioso").length;
   const peso = s => {
+    if (s.tipo === "plateia") return (a.gostos[s.assiste] || 1) * 1.6;
     let p = (a.gostos[s.tipo] || 1) * (1 + state.agents.filter(o => o.spot && o.spot.tipo === s.tipo).length);
     if (s.tipo === "pingpong") {
       const esperando = state.agents.some(o => o.spot && o.spot.tipo === "pingpong");
@@ -138,7 +208,9 @@ function escolherAtividade(a) {
   goTo(a, escolhido.x, escolhido.y, () => {
     a.arrived = true; a.face = escolhido.face; a.flip = escolhido.flip; a.sitting = escolhido.sit; a.seatH = escolhido.seatH;
     const juntos = state.agents.filter(o => o !== a && o.spot && o.spot.tipo === escolhido.tipo && o.arrived);
-    if (juntos.length) log(`${a.nome} se juntou a ${juntos.map(o => o.nome).join(" e ")} para ${ATIVIDADE_TXT[escolhido.tipo]}`);
+    if (escolhido.tipo === "plateia") log(`${a.nome} parou para ${textoAtividade(escolhido)}`);
+    else if (juntos.length) log(`${a.nome} se juntou a ${juntos.map(o => o.nome).join(" e ")} para ${textoAtividade(escolhido)}`);
+    a.proxFala = rand(0.8, 2.5);
   });
 }
 function ficarLivre(a, tarefa) {
@@ -146,7 +218,7 @@ function ficarLivre(a, tarefa) {
   a.idleLeft = a.real ? Infinity : rand(25, 50);
   a.atDesk = false;
   escolherAtividade(a);
-  log(`${a.nome} terminou a vez e foi ${a.spot ? ATIVIDADE_TXT[a.spot.tipo] : "dar uma volta"}`);
+  log(`${a.nome} terminou a vez e foi ${a.spot ? textoAtividade(a.spot) : "dar uma volta"}`);
 }
 function sairPeloElevador(a) {
   goTo(a, ELEVATOR.x, ELEVATOR.y, () => { state.elevatorOpen = 1.4; a.leaving = 0.001; a.face = "back"; });
@@ -178,6 +250,8 @@ function entregar(a) {
   goTo(a, alvo.x, alvo.y, () => {
     Object.assign(a, faceDe(Math.floor(pai.px) - alvo.x, Math.floor(pai.py) - alvo.y));
     log(`${a.nome} entregou o resultado para ${pai.nome} 📦`);
+    falar(a, "Tá aqui o resultado! 📦", 2.4);
+    responderDepois(pai, "Valeu! 🙌", 1.2);
     a.esperaEntrega = 1.8;
   });
 }
@@ -212,6 +286,7 @@ function atualizarPingPong(dt) {
     if (state.time - state.pp.inicio > 20) {
       const [v, p] = Math.random() < 0.5 ? [state.pp.a, state.pp.b] : [state.pp.b, state.pp.a];
       log(`${v.nome} ganhou de ${p.nome} no ping-pong: 5 × ${Math.floor(rand(1, 5))}`);
+      falar(v, "Ganhei! 🏆", 3); responderDepois(p, pick(["Revanche depois!", "Foi sorte…", "Boa partida!"]), 1.1);
       state.pp = null;
       for (const j of jogadores) { liberarSpot(j); if (j.idleLeft > 4) escolherAtividade(j); }
     }
@@ -255,12 +330,18 @@ function update(dt) {
       case "ocioso": {
         a.idleLeft -= dt;
         const emPartida = state.pp && (state.pp.a === a || state.pp.b === a);
+        if (a.arrived && a.spot) {
+          a.proxFala = (a.proxFala ?? rand(1, 4)) - dt;
+          if (a.proxFala <= 0) { a.proxFala = rand(6, 12) / (0.7 + (a.gostos.conversa || 1) * 0.12); puxarAssunto(a); }
+          if (a.spot.tipo === "plateia" && !atividadeAtiva(a.spot.assiste) && a.idleLeft > 4) { liberarSpot(a); escolherAtividade(a); }
+        }
         if (a.arrived && a.spot && !emPartida) {
           a.activityLeft -= dt;
           if (a.spot.tipo === "futebol" && Math.random() < dt * 0.04 && state.gol <= 0) {
             state.gol = 2.5;
             const torcida = state.agents.filter(o => o.spot && o.spot.tipo === "futebol" && o.arrived).map(o => o.nome);
             log(`GOL! ${torcida.join(" e ")} ${torcida.length > 1 ? "comemoram" : "comemora"} no sofá ⚽`);
+            for (const o of state.agents) if (o.spot && (o.spot.tipo === "futebol" || o.spot.assiste === "futebol") && o.arrived) falar(o, pick(["GOOOL! ⚽", "Golaço!", "É GOL!"]), 2.6);
           }
           if (a.activityLeft <= 0 && a.idleLeft > 4) { liberarSpot(a); escolherAtividade(a); }
         }
@@ -274,6 +355,12 @@ function update(dt) {
     }
   }
   atualizarPingPong(dt);
+  state.respostas = state.respostas.filter(r => {
+    if (state.time < r.em) return true;
+    if (state.agents.includes(r.quem)) falar(r.quem, r.texto, 2.6);
+    return false;
+  });
+  for (const a of state.agents) if (a.status === "shell" && !a.disseBuild && state.time - a.since > 8) { a.disseBuild = true; falar(a, "Esse comando não acaba… 🍿"); }
 
   // luz de cada cômodo acende quando tem gente (só faz diferença à noite)
   for (const z of FLOORS) {

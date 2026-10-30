@@ -37,7 +37,7 @@ function renderUI() {
     else if (a.status === "ocioso") acoes = `<button class="btn primary" data-act="instrucao">Enviar instrução</button><button class="btn danger" data-act="encerrar">Encerrar sessão</button>`;
     else if (a.sub) acoes = "";
     else if (a.status === "trabalhando" || a.status === "shell") acoes = `<button class="btn danger" data-act="encerrar">Encerrar sessão</button>`;
-    const agora = a.status === "ocioso" && a.spot ? `Foi ${ATIVIDADE_TXT[a.spot.tipo]}` : (a.status === "shell" ? `Esperando <code>${a.tarefa}</code>` : a.tarefa);
+    const agora = a.status === "ocioso" && a.spot ? `Foi ${textoAtividade(a.spot)}` : (a.status === "shell" ? `Esperando <code>${a.tarefa}</code>` : a.tarefa);
     $("details").innerHTML = `
       <h2>${a.nome}</h2>
       <p><span class="pill s-${a.status}">${STATUS_TXT[a.status]}</span></p>
@@ -45,7 +45,7 @@ function renderUI() {
       <span class="label">Origem</span><p>${a.sub ? `Subagente${a.pai ? " de " + a.pai.nome : ""}${a.real ? "" : " (demonstração)"}` : a.real ? "Sessão do Claude Code" : "Demonstração"}</p>
       ${a.sub && a.descricao ? `<span class="label">Tarefa recebida</span><p>${a.descricao}</p>` : ""}
       <span class="label">Agora</span><p>${agora}</p>
-      <span class="label">Jeito</span><p>${a.jeito}</p>
+      <span class="label">Jeito</span><p>${a.jeito}</p>${a.bordao ? `<p>“${a.bordao}”</p>` : ""}
       <div class="actions">${acoes}</div>`;
   }
 
@@ -139,7 +139,7 @@ function agentAt(px, py) {
   const k = camInfo(), p = toArt(px, py, k);
   const ordered = [...state.agents].sort((p1, q) => profundidade(q.px, q.py) - profundidade(p1.px, p1.py));
   return ordered.find(a => {
-    const c = P(a.px, a.py), seat = a.sitting ? (a.seatH || 14) : 0, h = a.sitting ? 44 : 56;
+    const c = P(a.px, a.py), seat = a.sitting ? (a.seatH || 14) : 0, h = a.sitting ? 42 : 52;
     return p.x > c.x - 14 && p.x < c.x + 14 && p.y > c.y - seat - h && p.y < c.y + 8;
   });
 }

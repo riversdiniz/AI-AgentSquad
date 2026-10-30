@@ -130,6 +130,7 @@ function bubbleFor(a, t) {
       if (!(a.spot && a.arrived)) return null;
       if (a.spot.tipo === "conversa") return { icon: Math.sin(t * 0.8 + a.seed * 3) > 0.3 ? "😂" : "💬" };
       if (a.spot.tipo === "futebol" && state.gol > 0) return { icon: "🎉" };
+      if (a.spot.tipo === "plateia" && state.gol > 0) return { icon: "🎉" };
       return { icon: ICONES[a.spot.tipo] };
   }
   return null;
@@ -151,7 +152,7 @@ function apresentar(t) {
   for (const a of ordered) {
     const c = P(a.px, a.py, 0);
     const seat = a.sitting ? (a.seatH || 14) : 0;
-    const head = toScreen(c.x, c.y - seat - (a.sitting ? 40 : 55), k);
+    const head = toScreen(c.x, c.y - seat - (a.sitting ? 37 : 47), k);
     const foot = toScreen(c.x, c.y + 8, k);
     const sel = a.id === state.selected;
     vg.font = `600 ${11 * u}px "Pixelify Sans", sans-serif`;
@@ -160,6 +161,7 @@ function apresentar(t) {
     vg.fillRect(foot.x - nw / 2, foot.y - 7 * u, nw, 14 * u);
     vg.fillStyle = sel ? "#2a1d05" : "#ffffff";
     vg.fillText(a.nome, foot.x, foot.y + 0.5 * u);
+    if (a.fala && state.time < a.fala.ate && a.leaving === 0) { balaoDeFala(head.x, head.y - 4 * u, a.fala.texto, u, a.fala.alerta); continue; }
     const b = bubbleFor(a, t);
     if (!b) continue;
     const r = 12 * u, bx = head.x, by = head.y - r - 4 * u;
@@ -171,4 +173,25 @@ function apresentar(t) {
     vg.font = `${13 * u}px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
     vg.fillText(b.icon, bx, by + 1 * u);
   }
+}
+
+/* Balão com texto: quebra em até duas linhas, com rabinho apontando para a cabeça */
+function balaoDeFala(x, yBase, texto, u, alerta) {
+  vg.font = `600 ${11.5 * u}px "Atkinson Hyperlegible", system-ui, sans-serif`;
+  const max = 150 * u, palavras = texto.split(" "), linhas = [""];
+  for (const p of palavras) {
+    const teste = linhas[linhas.length - 1] ? linhas[linhas.length - 1] + " " + p : p;
+    if (vg.measureText(teste).width > max && linhas[linhas.length - 1]) { if (linhas.length === 2) { linhas[1] += "…"; break; } linhas.push(p); }
+    else linhas[linhas.length - 1] = teste;
+  }
+  const lh = 14 * u, pad = 6 * u;
+  const w = Math.max(...linhas.map(l => vg.measureText(l).width)) + pad * 2, h = linhas.length * lh + pad * 1.2;
+  const bx = Math.round(x - w / 2), by = Math.round(yBase - h - 6 * u);
+  vg.fillStyle = alerta ? "#c9443d" : "#ffffff";
+  vg.strokeStyle = alerta ? "#ffffff" : "#1d292c"; vg.lineWidth = 2 * u;
+  vg.beginPath(); vg.rect(bx, by, w, h); vg.fill(); vg.stroke();
+  vg.beginPath(); vg.moveTo(x - 4 * u, by + h); vg.lineTo(x, by + h + 6 * u); vg.lineTo(x + 4 * u, by + h); vg.closePath(); vg.fill(); vg.stroke();
+  vg.fillRect(x - 3 * u, by + h - 2 * u, 6 * u, 3 * u);
+  vg.fillStyle = alerta ? "#ffffff" : "#1d292c";
+  linhas.forEach((l, i) => vg.fillText(l, x, by + pad * 0.6 + lh * (i + 0.5)));
 }

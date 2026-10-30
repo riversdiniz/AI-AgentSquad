@@ -56,10 +56,11 @@ function faceDe(dx, dy) { const sdx = dx - dy, sdy = dx + dy; return { face: sdy
 /* Lugares: mesas de trabalho e pontos da vida social */
 const DESKS = [], SPOTS = [];
 let ELEVATOR = { x:0, y:0 };
-function addSpot(sx, sy, tx, ty, tipo, sit, seatH) {
+function addSpot(sx, sy, tx, ty, tipo, sit, seatH, assiste = null) {
   if (sx == null) return;
-  SPOTS.push({ x:sx, y:sy, tipo, sit, seatH, key:`${sx},${sy}`, ...faceDe(tx - sx, ty - sy) });
+  SPOTS.push({ x:sx, y:sy, tipo, sit, seatH, assiste, key:`${sx},${sy}`, ...faceDe(tx - sx, ty - sy) });
 }
+const livreParaPlateia = (x, y) => { const c = at(x, y); return c && walkable(x, y) && !SEATS.includes(c); };
 for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
   const c = at(x, y);
   if (c === "c") DESKS.push({ x, y, key:`${x},${y}`, ...faceDe(0, 1) });
@@ -74,5 +75,9 @@ for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
   if (c === "G") {
     if (at(x-1, y) !== "G" && walkable(x-1, y)) addSpot(x-1, y, x, y, "pingpong", false, 0);
     if (at(x+1, y) !== "G" && walkable(x+1, y)) addSpot(x+1, y, x, y, "pingpong", false, 0);
+    if (livreParaPlateia(x, y-1)) addSpot(x, y-1, x, y, "plateia", false, 0, "pingpong");     // torcida atrás da mesa
   }
+  if (c === "S" && at(x-1, y) !== "S" && livreParaPlateia(x-1, y)) addSpot(x-1, y, x-1, y-3, "plateia", false, 0, "futebol");
+  if (c === "S" && at(x+1, y) !== "S" && livreParaPlateia(x+1, y)) addSpot(x+1, y, x+1, y-3, "plateia", false, 0, "futebol");
+  if (c === "A" && at(x-1, y) !== "A" && livreParaPlateia(x-1, y+1)) addSpot(x-1, y+1, x, y+1, "plateia", false, 0, "games");
 }
